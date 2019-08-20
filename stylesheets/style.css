@@ -1,0 +1,12 @@
+body{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#display>*{
+    background-color: darkgray;
+    margin-top: 30px;
+    border: 1px dashed black;
+}
