@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "browser-sync start --server --files '*.js'"
+    "start": "browser-sync start --server --files '*.js'",
+    "docs": ".node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "author": "RIKI",
   "license": "ISC",
@@ -13,5 +14,8 @@
     "browser-sync": "^2.26.7",
     "howler": "^2.1.2",
     "pixi-timer": "^1.0.1"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.3"
   }
 }

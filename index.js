@@ -1,3 +1,6 @@
+/**
+ * SHOOTING GAME
+ */
 const log = console.log;
 
 let app = PIXI.autoDetectRenderer(384, 640, {
@@ -25,13 +28,17 @@ let stage = new PIXI.Container,
 const getHeartSound = new Howl({
     src:'sounds/ouch.mp3'
 });
-
+/**
+ * Setup function render a first monster and begin the animation loop
+ */
 function setup(){
     stage.interactive = true;
     renderObject();
     animationLoop();
 }
-
+/**
+ * animation loop 
+ */
 function animationLoop(){
     requestAnimationFrame(animationLoop);
     //move monster to the bottom
@@ -41,31 +48,9 @@ function animationLoop(){
         element.y = monster.y - 60;
     })
     //chech for colision , only if monster and arrow exist
-    if(monster !== undefined && arrow !== undefined){
-        if(bump.hit(monster, arrow)){
-            //remove heart
-            stage.removeChild(hearts[monsterLives-1]);
-            hearts.splice(monsterLives-1, 1);
-            //get live
-            monsterLives -= 1;
-            //play sound  
-            getHeartSound.play();
-            //destroy arrow
-            stage.removeChild(arrow);
-            arrow = undefined;
-        }
-    }
-
+    colisionMonsterAndArrow();
     //chech monster's lives
-    if(monsterLives == 0){
-        //fade out
-        fadeObject(monster, 1);
-        //render new monster
-        renderObject();
-        //get point
-        points++;
-        log("Your Points : " + points);
-    }
+    chechMonsterLives();
     // move arrow to the mouse click point with arrowSpeed
     if(arrow !== undefined){
         arrow.x += Math.cos(arrow.rotation )*arrowSpeed;
@@ -80,19 +65,57 @@ function animationLoop(){
             renderArrow();
         }
     }
-    // if you kill 10 monster ,show the confirm window and ask to restart the game
+    //check if you have 10 points
+    chechPoints(points);
+    // render container
+    app.render(stage);
+}
+
+function chechMonsterLives(){
+    if(monsterLives == 0){
+        //fade out
+        fadeObject(monster, 1);
+        //render new monster
+        renderObject();
+        //get point
+        points++;
+        log("Your Points : " + points);
+    }
+}
+
+// set up the events if we have a colision between monster and arrow
+function colisionMonsterAndArrow(){
+    if(monster !== undefined && arrow !== undefined){
+        if(bump.hit(monster, arrow)){
+            //remove heart
+            stage.removeChild(hearts[monsterLives-1]);
+            hearts.splice(monsterLives-1, 1);
+            //get live
+            monsterLives -= 1;
+            //play sound  
+            getHeartSound.play();
+            //destroy arrow
+            stage.removeChild(arrow);
+            arrow = undefined;
+            // vibrate fow 300 ms
+            window.navigator.vibrate(300);
+        }
+    }
+}
+
+// if you kill 10 monster ,show the confirm window and ask to restart the game
+function chechPoints(points){
     if(points === 10){
-        let answer = window.confirm("Do you want to restart the game?")
+        let answer = window.confirm("Do you want to restart the game?");
+        //vibrate for 500ms
+        window.navigator.vibrate(500);
         if (answer) {
             location.reload();
         }else{
             points = 0;
         }
     }
-    // render container
-    app.render(stage);
 }
-
 
 // fade object
 function fadeObject(object,duration){
@@ -168,40 +191,3 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
-
-
-// DON'T WORK
-
-// function colisionDetection(r1, r2) {
-//     let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
-//     hit = false;
-//     r1.centerX = r1.x + r1.width / 2; 
-//     r1.centerY = r1.y + r1.height / 2; 
-//     r2.centerX = r2.x + r2.width / 2; 
-//     r2.centerY = r2.y + r2.height / 2; 
-//     r1.halfWidth = r1.width / 2;
-//     r1.halfHeight = r1.height / 2;
-//     r2.halfWidth = r2.width / 2;
-//     r2.halfHeight = r2.height / 2;
-//     vx = r1.centerX - r2.centerX;
-//     vy = r1.centerY - r2.centerY;
-//     combinedHalfWidths = r1.halfWidth + r2.halfWidth;
-//     combinedHalfHeights = r1.halfHeight + r2.halfHeight;
-//     if (Math.abs(vx) < combinedHalfWidths) {
-//       //A collision might be occuring. Check for a collision on the y axis
-//       if (Math.abs(vy) < combinedHalfHeights) {
-//         //There's definitely a collision happening
-//         hit = true;
-//       } else {
-//         //There's no collision on the y axis
-//         hit = false;
-//       }
-//     } else {
-//       //There's no collision on the x axis
-//       hit = false;
-//     }
-//     //`hit` will be either `true` or `false`
-//     return hit;
-//   };
