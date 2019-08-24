@@ -31,7 +31,7 @@ class appClass{
             this.monster = new monsterClass("task-assets/monster.png", getRandomInt(50, this.app.width - 50), 100, 3)
             this.monsterArray.push(this.monster);
             log(this.monsterArray);
-            this.stage.addChild(this.monster.object);
+            this.stage.addChild(this.monster.monsterContainer);
             this.counter = 0;
         }); 
         this.stage = new PIXI.Container;
@@ -68,10 +68,11 @@ class monsterClass{
         this.object.y = y;
         this.object.interactive = true;
         this.object.lives =new Array();
-        renderHearts(this.object, livesNum, this.object.lives);
+        this.monsterContainer = new PIXI.Container;
+        renderHearts(this, livesNum, this.object.lives);
         this.object.on('mousedown', this.onDown );
-        this.object.on('create', this.onCreate(this.object) );
-        
+        this.object.on('create', this.onCreate(this.monsterContainer) );
+        this.monsterContainer.addChild(this.object);
         
 
     }
@@ -190,11 +191,11 @@ function renderHearts(monster, monsterLives, array){
         let heart = new PIXI.Sprite.fromImage("task-assets/heart.png");
         heart.anchor.set(0.5, 0.5);
         heart.scale.set(0.3, 0.3);
-        heart.x = (monster.x - monster.width/2) + (monster.width/6);
-        heart.y = monster.y - 60;
-        heart.x += (monster.width/3)*i;
+        heart.x = (monster.object.x - monster.object.width/2) + (monster.object.width/6);
+        heart.y = monster.object.y - 60;
+        heart.x += (monster.object.width/3)*i;
         array.push(heart);
-        game.stage.addChild(heart);
+        monster.monsterContainer.addChild(heart);
     }
 }
 
